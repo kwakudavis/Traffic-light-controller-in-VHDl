@@ -1,0 +1,153 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity trafficLight  is
+port(
+     clk, reset, N, E : in std_logic;
+	   G,Y,R : out  std_logic);
+end trafficLight;
+
+architecture Behavioral of trafficLight is
+
+type state_type is (G1, G2, G3, Y1, R1, R2, R3, RY);
+signal state, next_state : state_type;
+
+begin
+
+clock : process(reset,clk)
+        begin
+		    IF reset = '1' then
+			    state <= G1;
+		  
+		    ELSIF clk'event and clk = '1' then
+            state <= next_state;
+          
+			 end if;
+          
+			 end process clock;
+
+
+
+trafficInState : process (state, N, E)
+      begin
+		    
+		    case state is
+			  
+				when G1 => 
+			     
+					 next_state <= G2;
+			  
+			  when G2 =>
+			   
+					if(E = '1') then
+					 next_state <= G3;
+					else
+					 next_state <= Y1;
+					end if;
+					
+           when G3 =>
+              	
+               next_state <= Y1;
+					
+			  when Y1 =>
+			      
+					 next_state <= R1;
+
+           when R1 => 
+			 
+					 next_state <= R2;
+			  
+			  when R2 =>
+			   
+					if(N = '1') then
+					 next_state <= R3;
+					else 
+					 next_state <= RY;
+					end if;
+					
+           when R3 =>
+
+               next_state <= RY;
+
+           when RY =>
+             
+               next_state <= G1;	
+ 
+           when others =>
+               NULL;
+
+         end case;
+
+end process trafficInState;	
+
+
+trafficOutState : process (state, N, E)
+  
+  begin
+		    
+		    case state is
+			  
+			  when G1 => 
+			      
+					 G <= '1';
+					 Y <='0';
+					 R <='0';
+ 			
+			  
+			  when G2 =>
+			       G <= '1';
+					 Y <='0';
+					 R <='0';
+ 			
+					
+           when G3 =>
+               G <= '1';
+					 Y <='0';
+					 R <='0';
+ 			
+					
+			  when Y1 =>
+			       
+					  G <= '0';
+					 Y <='1';
+					 R <='0';
+ 			
+
+           when R1 => 
+			       G <= '0';
+					 Y <='0';
+					 R <='1';
+ 			
+			  
+			  
+			  
+			  when R2 =>
+			       G <= '0';
+					 Y <='0';
+					 R <='1';
+ 			
+					
+           when R3 =>
+             G <= '0';
+					 Y <='0';
+					 R <='1';
+					 
+					 
+           when RY =>
+               G <= '0';
+					 Y <='1';
+					 R <='1';
+ 
+           when others =>
+               NULL;
+
+         end case;
+
+end process trafficOutState;	
+
+
+
+
+	 
+
+end Behavioral;
